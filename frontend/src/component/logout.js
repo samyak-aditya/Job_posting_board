@@ -11,7 +11,7 @@ const LogoutButton = ({ setIsAuthenticated, handleProfileMenuClose }) => {
     localStorage.removeItem('jwtToken'); // Remove token from local storage
     setIsAuthenticated(false); // Update authentication status
     handleProfileMenuClose();
-    navigate('/signup'); // Redirect to the signup page
+    navigate('/'); // Redirect to the signup page
   };
 
   return (
