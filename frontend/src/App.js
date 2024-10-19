@@ -7,10 +7,11 @@ import CreateInterview from './pages/createInterviews';
 import logo from './assets/logo.jpeg';
 import theme from './assets/theme';
 import VerifyOTP from './pages/verifyOTP';
+import LogoutButton from './component/logout'; // New component for logout
 
 function App() {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false); 
+  const [isAuthenticated, setIsAuthenticated] = useState(true); 
 
   // Check for JWT token in local storage
   useEffect(() => {
@@ -28,15 +29,6 @@ function App() {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    console.log('Logged out');
-    localStorage.removeItem('jwtToken'); 
-    setIsAuthenticated(false);
-    handleProfileMenuClose();
-  };
-
-  const isMenuOpen = Boolean(anchorEl);
-
   return (
     <ThemeProvider theme={theme}>
       <Router>
@@ -44,22 +36,14 @@ function App() {
           <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black' }}>
             <Toolbar>
               <img src={logo} alt="logo" style={{ width: 200, marginRight: 20 }} />
-              <Button color="inherit" component={Link} to="/signup">
-                Signup
-              </Button>
-              <Button color="inherit" component={Link} to="/login">
-                Login
-              </Button>
-              <Button color="inherit" component={Link} to="/create-interview">
-                Create Interview
-              </Button>
+             
               <div style={{ flexGrow: 1 }} />
               <IconButton edge="end" color="inherit" onClick={handleProfileMenuOpen}>
                 <AccountCircle />
               </IconButton>
               <Menu
                 anchorEl={anchorEl}
-                open={isMenuOpen}
+                open={Boolean(anchorEl)}
                 onClose={handleProfileMenuClose}
                 PaperProps={{
                   elevation: 0,
@@ -77,12 +61,12 @@ function App() {
                 }}
               >
                 <MenuItem onClick={handleProfileMenuClose}>Profile</MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                {/* Use LogoutButton component */}
+                <LogoutButton setIsAuthenticated={setIsAuthenticated} handleProfileMenuClose={handleProfileMenuClose} />
               </Menu>
             </Toolbar>
           </AppBar>
 
-          
           <Container>
             <Routes>
               <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
