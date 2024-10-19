@@ -25,8 +25,16 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true
-  }
+  },
+  emailOtp: { 
+    type: String 
+}, 
+  mobileOtp: { 
+    type: String 
+}, 
+  isVerified: { 
+    type: Boolean, default: false 
+}
 });
 
 

@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import { AppBar,ThemeProvider, Toolbar, Button, Container, Typography, IconButton, Menu, MenuItem } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
+import { AppBar, ThemeProvider, Box, Toolbar, Button, Container, IconButton, Menu, MenuItem } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
 import Signup from './pages/signup';
-import Login from './pages/login';
 import CreateInterview from './pages/createInterviews';
 import logo from './assets/logo.jpeg';
 import theme from './assets/theme';
+import VerifyOTP from './pages/verifyOTP';
 
 function App() {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false); 
+
+  // Check for JWT token in local storage
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken'); // Replace 'jwtToken' with your actual token key
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -20,8 +29,9 @@ function App() {
   };
 
   const handleLogout = () => {
-   
     console.log('Logged out');
+    localStorage.removeItem('jwtToken'); 
+    setIsAuthenticated(false);
     handleProfileMenuClose();
   };
 
@@ -29,61 +39,61 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-    <Router>
-      <div className="App">
-        <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black' }}>
-          <Toolbar>
-            <img src={logo} alt="logo" style={{ width: 200, marginRight: 20 }} />
-            <Button color="inherit" component={Link} to="/signup">
-              Signup
-            </Button>
-            <Button color="inherit" component={Link} to="/login">
-              Login
-            </Button>
-            <Button color="inherit" component={Link} to="/create-interview">
-              Create Interview
-            </Button>
-            <div style={{ flexGrow: 1 }} />
-            <IconButton
-              edge="end"
-              color="inherit"
-              onClick={handleProfileMenuOpen}
-            >
-              <AccountCircle />
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              open={isMenuOpen}
-              onClose={handleProfileMenuClose}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: 'visible',
-                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                  mt: 1.5,
-                  '& .MuiMenuItem-root': {
-                    '&:focus': {
-                      backgroundColor: '#f98949',
-                      color: 'white',
+      <Router>
+        <div className="App">
+          <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black' }}>
+            <Toolbar>
+              <img src={logo} alt="logo" style={{ width: 200, marginRight: 20 }} />
+              <Button color="inherit" component={Link} to="/signup">
+                Signup
+              </Button>
+              <Button color="inherit" component={Link} to="/login">
+                Login
+              </Button>
+              <Button color="inherit" component={Link} to="/create-interview">
+                Create Interview
+              </Button>
+              <div style={{ flexGrow: 1 }} />
+              <IconButton edge="end" color="inherit" onClick={handleProfileMenuOpen}>
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={isMenuOpen}
+                onClose={handleProfileMenuClose}
+                PaperProps={{
+                  elevation: 0,
+                  sx: {
+                    overflow: 'visible',
+                    mt: 1.5,
+                    '& .MuiMenuItem-root': {
+                      '&:focus': {
+                        backgroundColor: '#f98949',
+                        color: 'white',
+                        zIndex: '100'
+                      },
                     },
                   },
-                },
-              }}
-            >
-              <MenuItem onClick={handleProfileMenuClose}>Profile</MenuItem>
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
-            </Menu>
-          </Toolbar>
-        </AppBar>
-        <Container>
-          <Routes>
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/create-interview" element={<CreateInterview />} />
-          </Routes>
-        </Container>
-      </div>
-    </Router>
+                }}
+              >
+                <MenuItem onClick={handleProfileMenuClose}>Profile</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              </Menu>
+            </Toolbar>
+          </AppBar>
+
+          
+          <Container>
+            <Routes>
+              <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
+              <Route path="/verifyotp" element={<VerifyOTP />} />
+              <Route path="/create-interview" element={
+                isAuthenticated ? <CreateInterview /> : <Navigate to="/signup" />
+              } />
+            </Routes>
+          </Container>
+        </div>
+      </Router>
     </ThemeProvider>
   );
 }
