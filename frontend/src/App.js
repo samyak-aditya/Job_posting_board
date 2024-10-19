@@ -69,10 +69,10 @@ function App() {
 
           <Container>
             <Routes>
-              <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
+              <Route path="/" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
               <Route path="/verifyotp" element={<VerifyOTP />} />
               <Route path="/create-interview" element={
-                isAuthenticated ? <CreateInterview /> : <Navigate to="/signup" />
+                isAuthenticated ? <CreateInterview /> : <Navigate to="/" />
               } />
             </Routes>
           </Container>
